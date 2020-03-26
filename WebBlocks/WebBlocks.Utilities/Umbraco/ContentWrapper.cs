@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Web;
-using umbraco.BusinessLogic;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
+using Umbraco.Core.Services;
+using Umbraco.Core.Composing;
 
 namespace WebBlocks.Utilities.Umbraco
 {
     public class ContentWrapper : DynamicObject, IPublishedContent
     {
         protected IContent content;
-        protected User user = null;
         protected ContentWrapper parent = null;
+        
 
         public ContentWrapper(IContent content)
         {
@@ -51,8 +52,8 @@ namespace WebBlocks.Utilities.Umbraco
         {
             get
             {
-                if (user == null)
-                    user = new User(content.CreatorId);
+                //TOTEST - is this going to have a huge performance impact?
+                var user = Current.Services.UserService.GetUserById(content.CreatorId);
                 return user != null ? user.Name : "";
             }
         }
@@ -108,7 +109,7 @@ namespace WebBlocks.Utilities.Umbraco
             get { return content.Path; }
         }
 
-        public ICollection<IPublishedProperty> Properties
+        public IEnumerable<IPublishedProperty> Properties
         {
             get
             {
@@ -196,6 +197,20 @@ namespace WebBlocks.Utilities.Umbraco
             get { return true; }
         }
 
+        public string UrlSegment => throw new NotImplementedException();
+
+        int? IPublishedContent.TemplateId => throw new NotImplementedException();
+
+        public IReadOnlyDictionary<string, PublishedCultureInfo> Cultures => throw new NotImplementedException();
+
+        public IEnumerable<IPublishedContent> ChildrenForAllCultures => throw new NotImplementedException();
+
+        IPublishedContentType IPublishedElement.ContentType => throw new NotImplementedException();
+
+        public Guid Key
+        {
+            get { return content.Key; }
+        }
 
 
         public IPublishedProperty GetProperty(string alias)
@@ -215,6 +230,16 @@ namespace WebBlocks.Utilities.Umbraco
                 return Parent.GetProperty(alias, true);
            
             return value;
+        }
+
+        bool IPublishedContent.IsDraft(string culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPublished(string culture = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

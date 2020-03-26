@@ -12,10 +12,10 @@ namespace WebBlocks.Utilities.MVC
     /// </summary>
     public class HtmlClosure : IDisposable
     {
-        protected HtmlHelper<RenderModel> html;
+        protected HtmlHelper<ContentModel> html; //TOTEST change to ContentModel
         protected string htmlToClose;
 
-        public HtmlClosure(HtmlHelper<RenderModel> html, string htmlToClose)
+        public HtmlClosure(HtmlHelper<ContentModel> html, string htmlToClose) //TOTEST change to ContentModel
         {
             this.html = html;
             this.htmlToClose = htmlToClose;
